@@ -14,7 +14,7 @@ async function findTicketByEnrollmentId(enrollmentId: number): Promise<Ticket & 
   });
 }
 
-async function createTicket(data: Omit<Ticket, "id" | "createdAt">): Promise<Ticket> {
+async function createTicket(data: Omit<Ticket, "id" | "createdAt">): Promise<Ticket & { TicketType: TicketType }> {
   return prisma.ticket.create({ 
     data,
     include: {

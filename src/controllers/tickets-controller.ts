@@ -8,7 +8,7 @@ export async function getTicketTypes(req: AuthenticatedRequest, res: Response) {
     const tickets = await ticketsService.getTicketTypes();
     return res.status(httpStatus.OK).send(tickets);
   } catch (error) {
-    return res.sendStatus(httpStatus.UNAUTHORIZED);
+    return res.sendStatus(httpStatus.BAD_REQUEST);
   }
 }
 
@@ -20,16 +20,15 @@ export async function getTicketByUser(req: AuthenticatedRequest, res: Response) 
     if (error.name === "NotFoundError") {
       return res.sendStatus(httpStatus.NOT_FOUND);
     }
-    return res.sendStatus(httpStatus.UNAUTHORIZED);
   }
 }
 
 export async function postNewTicket(req: AuthenticatedRequest, res: Response) {
+  const { userId } = req;
+  const ticketTypeId = req.body.ticketTypeId as number;
+
   try {
-    const ticket = await ticketsService.setTicket({ 
-      userId: req.userId, 
-      ticketTypeId: req.body.ticketTypeId 
-    });
+    const ticket = await ticketsService.setTicket({ userId, ticketTypeId });
     return res.status(httpStatus.CREATED).send(ticket);
   } catch (error) {
     if (error.name === "InvalidBody") {
@@ -38,6 +37,5 @@ export async function postNewTicket(req: AuthenticatedRequest, res: Response) {
     if (error.name === "NotFoundError") {
       return res.sendStatus(httpStatus.NOT_FOUND);
     }
-    return res.sendStatus(httpStatus.UNAUTHORIZED);
   }
 }

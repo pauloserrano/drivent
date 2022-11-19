@@ -29,7 +29,6 @@ async function setTicket(params: newTicketParams) {
     status: "RESERVED",
     updatedAt: new Date()
   });
-  // TODO create new ticket
 }
 
 export type newTicketParams = {
