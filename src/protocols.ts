@@ -19,7 +19,6 @@ export type AddressEnrollment = {
   cidade: string,
   uf: string,
   error?: string
-
 }
 
 export type RequestError = {
