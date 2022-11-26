@@ -26,7 +26,18 @@ export async function createHotel() {
   return prisma.hotel.create({
     data: {
       image: "picsum.photos/200/200",
-      name: "Hotel California"
+      name: "Hotel California",
+      Rooms: {
+        createMany: {
+          data: [
+            { name: "01", capacity: 2 },
+            { name: "02", capacity: 2 },
+            { name: "03", capacity: 2 },
+            { name: "04", capacity: 2 },
+            { name: "05", capacity: 2 }
+          ]
+        }
+      }
     }
   });
 }

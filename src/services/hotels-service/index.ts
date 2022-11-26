@@ -1,53 +1,43 @@
-import { Hotel, TicketStatus } from "@prisma/client";
+import { TicketStatus } from "@prisma/client";
 import hotelRepository from "@/repositories/hotel-repository";
 import enrollmentRepository from "@/repositories/enrollment-repository";
-import { notFoundError, unauthorizedError } from "@/errors";
 import ticketsRepository from "@/repositories/tickets-repository";
-import { ticketNotPaidError } from "./errors";
+import { paymentRequiredError, accessDeniedError } from "./errors";
+import { notFoundError } from "@/errors";
 
-async function getHotels(userId: number) {
+async function getHotelData(userId: number, hotelId: string) {
   const enrollment = await enrollmentRepository.findEnrollmentByUserId(userId);
-  if (!enrollment) throw notFoundError();
+  if (!enrollment) {
+    throw accessDeniedError();
+  }
 
   const ticket = await ticketsRepository.findTicketByEnrollmentId(enrollment.id);
   if (!ticket) {
-    throw notFoundError();
+    throw accessDeniedError();
   }
 
   if (ticket.status !== TicketStatus.PAID) {
-    throw ticketNotPaidError();
+    throw paymentRequiredError();
   }
 
   if (!ticket.TicketType.includesHotel || ticket.TicketType.isRemote) {
-    throw unauthorizedError();
+    throw accessDeniedError();
   }
 
-  return hotelRepository.findHotels();
-}
-
-async function getHotelById(hotelId: number, userId: number): Promise<Hotel> {
-  const enrollment = await enrollmentRepository.findEnrollmentByUserId(userId);
-  if (!enrollment) throw notFoundError();
-
-  const ticket = await ticketsRepository.findTicketByEnrollmentId(enrollment.id);
-  if (!ticket) {
+  if (!hotelId) {
+    return hotelRepository.findHotels();
+  }
+  
+  const hotel = await hotelRepository.findHotelById(+hotelId);
+  if (!hotel) {
     throw notFoundError();
   }
-
-  if (ticket.status !== TicketStatus.PAID) {
-    throw ticketNotPaidError();
-  }
-
-  if (!ticket.TicketType.includesHotel || ticket.TicketType.isRemote) {
-    throw unauthorizedError();
-  }
-
-  return hotelRepository.findHotelById(hotelId);
+  
+  return hotel;
 }
 
 const hotelsService = {
-  getHotels,
-  getHotelById
+  getHotelData,
 };
 
 export default hotelsService;

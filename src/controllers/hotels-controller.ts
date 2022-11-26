@@ -3,43 +3,29 @@ import { AuthenticatedRequest } from "@/middlewares";
 import hotelService from "@/services/hotels-service";
 import httpStatus from "http-status";
 
-export async function getHotels(req: AuthenticatedRequest, res: Response) {
+export async function getHotelData(req: AuthenticatedRequest, res: Response) {
   const { userId } = req;
+  const hotelId = req.params.hotelId as string;
 
   try {
-    const hotels = await hotelService.getHotels(+userId);
+    const hotels = await hotelService.getHotelData(+userId, hotelId);
     return res.status(httpStatus.OK).send(hotels);
   } catch (error) {
-    if (error.name === "NotFoundError") {
+    switch (error.name) {
+    case "AccessDeniedError":
+      return res.sendStatus(httpStatus.FORBIDDEN);
+    
+    case "NotFoundError":
       return res.sendStatus(httpStatus.NOT_FOUND);
-    }
-    if (error.name === "TicketNotPaidError") {
+    
+    case "PaymentRequiredError":
       return res.sendStatus(httpStatus.PAYMENT_REQUIRED);
-    }
-    if (error.name === "UnauthorizedError") {
+    
+    case "UnauthorizedError":
       return res.sendStatus(httpStatus.UNAUTHORIZED);
+    
+    default:
+      return res.sendStatus(httpStatus.BAD_REQUEST);
     }
-    return res.sendStatus(httpStatus.BAD_REQUEST);
-  }
-}
-
-export async function getHotelById(req: AuthenticatedRequest, res: Response) {
-  const { hotelId } = req.params;
-  const { userId } = req;
-
-  try {
-    const hotel = await hotelService.getHotelById(+hotelId, +userId);
-    return res.status(httpStatus.OK).send(hotel);
-  } catch (error) {
-    if (error.name === "NotFoundError") {
-      return res.sendStatus(httpStatus.NOT_FOUND);
-    }
-    if (error.name === "TicketNotPaidError") {
-      return res.sendStatus(httpStatus.PAYMENT_REQUIRED);
-    }
-    if (error.name === "UnauthorizedError") {
-      return res.sendStatus(httpStatus.UNAUTHORIZED);
-    }
-    return res.sendStatus(httpStatus.BAD_REQUEST);
   }
 }

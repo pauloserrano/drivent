@@ -1,15 +1,15 @@
 import { ApplicationError } from "@/protocols";
 
-export function cannotAccess(): ApplicationError {
+export function accessDeniedError(): ApplicationError {
   return {
-    name: "CannotAccess",
-    message: "Cannot see hotels before enrollment",
+    name: "AccessDeniedError",
+    message: "User cannot access this area yet",
   };
 }
 
-export function ticketNotPaidError(): ApplicationError {
+export function paymentRequiredError(): ApplicationError {
   return {
-    name: "TicketNotPaidError",
-    message: "Pay your rent",
+    name: "PaymentRequiredError",
+    message: "No payment received yet",
   };
 }
