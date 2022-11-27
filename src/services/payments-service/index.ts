@@ -1,5 +1,5 @@
 import paymentsRepository from "@/repositories/payments-repository";
-import ticketsRepository from "@/repositories/tickets-repository";
+import ticketsRepository from "@/repositories/ticket-repository";
 import { notFoundError, unauthorizedError } from "@/errors";
 import { invalidBody } from "./errors";
 

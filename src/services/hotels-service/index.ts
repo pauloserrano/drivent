@@ -1,7 +1,7 @@
 import { TicketStatus } from "@prisma/client";
 import hotelRepository from "@/repositories/hotel-repository";
 import enrollmentRepository from "@/repositories/enrollment-repository";
-import ticketsRepository from "@/repositories/tickets-repository";
+import ticketsRepository from "@/repositories/ticket-repository";
 import { paymentRequiredError, accessDeniedError } from "./errors";
 import { notFoundError } from "@/errors";
 
