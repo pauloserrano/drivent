@@ -40,4 +40,5 @@ const hotelsService = {
   getHotelData,
 };
 
+export * from "./errors";
 export default hotelsService;

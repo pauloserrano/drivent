@@ -2,7 +2,7 @@ import supertest from "supertest";
 import jwt from "jsonwebtoken";
 import httpStatus from "http-status";
 import app from "@/app";
-import { createEnrollmentWithAddress, createTicket, createUser, createInvalidTicketType, createValidTicketType, createHotel } from "../factories";
+import { createEnrollmentWithAddress, createTicket, createUser, createInvalidTicketType, createValidTicketType, createHotel, createManyRooms } from "../factories";
 import { cleanDb, generateValidToken } from "../helpers";
 import { connectDb } from "@/config";
 import { TicketStatus } from "@prisma/client";
@@ -78,13 +78,27 @@ describe("GET /hotels/hotelId?", () => {
       expect(response.status).toEqual(httpStatus.FORBIDDEN);
     });
 
+    it("should respond with status 200 and an empty array", async () => {
+      const user = await createUser();
+      const token = await generateValidToken(user);
+      const enrollment = await createEnrollmentWithAddress(user);
+      const ticketType = await createValidTicketType();
+      await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
+
+      const response = await server.get("/hotels").set("Authorization", `Bearer ${token}`);
+
+      expect(response.status).toEqual(httpStatus.OK);
+      expect(response.body).toEqual([]);
+    });
+
     it("should respond with status 200 and hotels data", async () => {
       const user = await createUser();
       const token = await generateValidToken(user);
       const enrollment = await createEnrollmentWithAddress(user);
       const ticketType = await createValidTicketType();
       await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
-      await createHotel();
+      const hotel = await createHotel();
+      await createManyRooms(hotel);
 
       const response = await server.get("/hotels").set("Authorization", `Bearer ${token}`);
 
@@ -158,6 +172,7 @@ describe("GET /hotels/hotelId?", () => {
 
     it("should respond with status 200 and hotels data", async () => {
       const hotel = await createHotel();
+      await createManyRooms(hotel);
       const user = await createUser();
       const token = await generateValidToken(user);
       const enrollment = await createEnrollmentWithAddress(user);
