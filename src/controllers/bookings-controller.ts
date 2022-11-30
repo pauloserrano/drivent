@@ -20,12 +20,6 @@ export async function getBooking(req: AuthenticatedRequest, res: Response) {
     case "NotFoundError":
       return res.sendStatus(httpStatus.NOT_FOUND);
     
-    case "PaymentRequiredError":
-      return res.sendStatus(httpStatus.PAYMENT_REQUIRED);
-    
-    case "UnauthorizedError":
-      return res.sendStatus(httpStatus.UNAUTHORIZED);
-    
     default:
       return res.sendStatus(httpStatus.BAD_REQUEST);
     }
@@ -46,12 +40,6 @@ export async function postBooking(req: AuthenticatedRequest, res: Response) {
     
     case "NotFoundError":
       return res.sendStatus(httpStatus.NOT_FOUND);
-    
-    case "PaymentRequiredError":
-      return res.sendStatus(httpStatus.PAYMENT_REQUIRED);
-    
-    case "UnauthorizedError":
-      return res.sendStatus(httpStatus.UNAUTHORIZED);
     
     default:
       return res.sendStatus(httpStatus.BAD_REQUEST);
@@ -74,12 +62,6 @@ export async function updateBooking(req: AuthenticatedRequest, res: Response) {
     
     case "NotFoundError":
       return res.sendStatus(httpStatus.NOT_FOUND);
-    
-    case "PaymentRequiredError":
-      return res.sendStatus(httpStatus.PAYMENT_REQUIRED);
-    
-    case "UnauthorizedError":
-      return res.sendStatus(httpStatus.UNAUTHORIZED);
     
     default:
       return res.sendStatus(httpStatus.BAD_REQUEST);

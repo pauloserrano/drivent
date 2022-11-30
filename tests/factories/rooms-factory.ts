@@ -27,3 +27,15 @@ export async function createManyRooms(hotel?: Hotel) {
     ]
   });
 }
+
+export async function createFilledRoom(hotel?: Hotel) {
+  const incomingHotel = hotel || (await createHotel());
+
+  return prisma.room.create({
+    data: {
+      name: "400", 
+      capacity: 0, 
+      hotelId: incomingHotel.id
+    }
+  });
+}

@@ -27,9 +27,6 @@ export async function createHotel() {
     data: {
       image: "picsum.photos/200/200",
       name: "Hotel California",
-    },
-    include: {
-      Rooms: true
     }
   });
 }

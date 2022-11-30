@@ -9,7 +9,7 @@ import roomRepository from "@/repositories/room-repository";
 async function getBookingByUser(userId: number) {
   await hasValidEnrollment(userId);
 
-  const booking = bookingRepository.findBookingByUserId(userId);
+  const booking = await bookingRepository.findBookingByUserId(userId);
   if (!booking) throw notFoundError();
 
   return booking;
@@ -17,6 +17,10 @@ async function getBookingByUser(userId: number) {
 
 async function postBooking(userId: number, roomId: number): Promise<Booking> {
   await hasValidEnrollment(userId);
+  
+  if (!roomId) {
+    throw accessDeniedError();
+  }
 
   const room = await roomRepository.findRoomById(roomId);
   if (!room) {
@@ -55,7 +59,10 @@ async function updateBooking(userId: number, bookingId: number, roomId: number):
     throw accessDeniedError();
   }
 
-  return bookingRepository.createBooking(userId, roomId);
+  const newBooking = await bookingRepository.createBooking(userId, roomId);
+  await bookingRepository.deleteBookingById(bookingId);
+
+  return newBooking;
 }
 
 async function hasValidEnrollment(userId: number): Promise<void> {
@@ -76,6 +83,10 @@ async function hasValidEnrollment(userId: number): Promise<void> {
   if (!ticket.TicketType.includesHotel || ticket.TicketType.isRemote) {
     throw accessDeniedError();
   }
+}
+
+export type newBookingBody = {
+  roomId: number
 }
 
 const bookingsService = {
