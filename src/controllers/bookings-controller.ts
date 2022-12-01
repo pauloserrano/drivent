@@ -54,7 +54,7 @@ export async function updateBooking(req: AuthenticatedRequest, res: Response) {
 
   try {
     const booking = await bookingsService.updateBooking(userId, +bookingId, roomId);
-    return res.status(httpStatus.OK).send({ booking: booking.id });
+    return res.status(httpStatus.OK).send({ bookingId: booking.id });
   } catch (error) {
     switch (error.name) {
     case "AccessDeniedError":

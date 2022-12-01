@@ -18,16 +18,12 @@ async function getBookingByUser(userId: number) {
 async function postBooking(userId: number, roomId: number): Promise<Booking> {
   await hasValidEnrollment(userId);
   
-  if (!roomId) {
-    throw accessDeniedError();
-  }
-
   const room = await roomRepository.findRoomById(roomId);
   if (!room) {
     throw notFoundError();
   }
 
-  if (room.Booking.length === room.capacity) {
+  if (room._count.Booking === room.capacity) {
     throw accessDeniedError();
   }
 
@@ -36,10 +32,6 @@ async function postBooking(userId: number, roomId: number): Promise<Booking> {
 
 async function updateBooking(userId: number, bookingId: number, roomId: number): Promise<Booking> {
   await hasValidEnrollment(userId);
-
-  if (!bookingId) {
-    throw accessDeniedError();
-  }
 
   const booking = await bookingRepository.findBookingById(bookingId);
   if (!booking) {
@@ -55,7 +47,7 @@ async function updateBooking(userId: number, bookingId: number, roomId: number):
     throw notFoundError();
   }
 
-  if (room.Booking.length === room.capacity) {
+  if (room._count.Booking === room.capacity) {
     throw accessDeniedError();
   }
 
@@ -87,6 +79,10 @@ async function hasValidEnrollment(userId: number): Promise<void> {
 
 export type newBookingBody = {
   roomId: number
+}
+
+export type newBookingParam = {
+  bookingId: number
 }
 
 const bookingsService = {
