@@ -6,7 +6,7 @@ import { notFoundError } from "@/errors";
 import { accessDeniedError } from "../hotels-service";
 import roomRepository from "@/repositories/room-repository";
 
-async function getBookingByUser(userId: number) {
+async function getBookingByUser(userId: Booking["userId"]) {
   await hasValidEnrollment(userId);
 
   const booking = await bookingRepository.findBookingByUserId(userId);
@@ -15,7 +15,7 @@ async function getBookingByUser(userId: number) {
   return booking;
 }
 
-async function postBooking(userId: number, roomId: number): Promise<Booking> {
+async function postBooking(userId: Booking["userId"], roomId: Booking["roomId"]): Promise<Booking> {
   await hasValidEnrollment(userId);
   
   const room = await roomRepository.findRoomById(roomId);
@@ -30,9 +30,7 @@ async function postBooking(userId: number, roomId: number): Promise<Booking> {
   return bookingRepository.createBooking(userId, roomId);
 }
 
-async function updateBooking(userId: number, bookingId: number, roomId: number): Promise<Booking> {
-  await hasValidEnrollment(userId);
-
+async function updateBooking(userId: Booking["userId"], bookingId: Booking["id"], roomId: Booking["roomId"]): Promise<Booking> {
   const booking = await bookingRepository.findBookingById(bookingId);
   if (!booking) {
     throw accessDeniedError();
@@ -51,13 +49,10 @@ async function updateBooking(userId: number, bookingId: number, roomId: number):
     throw accessDeniedError();
   }
 
-  const newBooking = await bookingRepository.createBooking(userId, roomId);
-  await bookingRepository.deleteBookingById(bookingId);
-
-  return newBooking;
+  return bookingRepository.updateBooking(booking.id, roomId);
 }
 
-async function hasValidEnrollment(userId: number): Promise<void> {
+async function hasValidEnrollment(userId: Booking["userId"]): Promise<void> {
   const enrollment = await enrollmentRepository.findEnrollmentByUserId(userId);
   if (!enrollment) {
     throw accessDeniedError();
@@ -78,11 +73,11 @@ async function hasValidEnrollment(userId: number): Promise<void> {
 }
 
 export type newBookingBody = {
-  roomId: number
+  roomId: Booking["roomId"]
 }
 
 export type newBookingParam = {
-  bookingId: number
+  bookingId: Booking["id"]
 }
 
 const bookingsService = {

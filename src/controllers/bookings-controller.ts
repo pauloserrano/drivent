@@ -13,16 +13,7 @@ export async function getBooking(req: AuthenticatedRequest, res: Response) {
       Room: booking.Room
     });
   } catch (error) {
-    switch (error.name) {
-    case "AccessDeniedError":
-      return res.sendStatus(httpStatus.FORBIDDEN);
-    
-    case "NotFoundError":
-      return res.sendStatus(httpStatus.NOT_FOUND);
-    
-    default:
-      return res.sendStatus(httpStatus.BAD_REQUEST);
-    }
+    return res.sendStatus(httpStatus.NOT_FOUND);
   }
 }
 
@@ -40,9 +31,6 @@ export async function postBooking(req: AuthenticatedRequest, res: Response) {
     
     case "NotFoundError":
       return res.sendStatus(httpStatus.NOT_FOUND);
-    
-    default:
-      return res.sendStatus(httpStatus.BAD_REQUEST);
     }
   }
 }
@@ -62,9 +50,6 @@ export async function updateBooking(req: AuthenticatedRequest, res: Response) {
     
     case "NotFoundError":
       return res.sendStatus(httpStatus.NOT_FOUND);
-    
-    default:
-      return res.sendStatus(httpStatus.BAD_REQUEST);
     }
   }
 }
